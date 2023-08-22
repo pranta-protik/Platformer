@@ -26,7 +26,7 @@ public class LockInspector
         ActiveEditorTracker.sharedTracker.ForceRebuild();
     }
 
-    [MenuItem("Edit/Lock Inspector %l", true)]
+    [MenuItem("Edit/Toggle Lock Inspector %l", true)]
     public static bool Valid()
     {
         return ActiveEditorTracker.sharedTracker.activeEditors.Length != 0;

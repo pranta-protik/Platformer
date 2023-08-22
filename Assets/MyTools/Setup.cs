@@ -9,7 +9,7 @@ public static class Setup
     [MenuItem("Tools/Setup/Create Default Folders")]
     public static void CreateDefaultFolders()
     {
-        Folders.CreateDefault("_Projects", "Animation", "Art", "Materials", "Prefabs", "ScriptableObjects", "Scripts", "Settings");
+        Folders.CreateDefault("_Project", "Animation", "Art", "Materials", "Prefabs", "ScriptableObjects", "Scripts", "Settings");
         Refresh();
     }
 
