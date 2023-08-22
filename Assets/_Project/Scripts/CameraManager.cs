@@ -1,12 +1,11 @@
-﻿using System;
-using System.Collections;
+﻿using System.Collections;
 using Cinemachine;
 using KBCore.Refs;
 using UnityEngine;
 
 namespace Platformer
 {
-    public class CameraManager : MonoBehaviour
+    public class CameraManager : ValidatedMonoBehaviour
     {
         [Header("References")] 
         [SerializeField, Anywhere] private InputReader _input;
