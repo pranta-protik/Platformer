@@ -13,6 +13,12 @@ public static class Setup
         Refresh();
     }
 
+    [MenuItem("Tools/Setup/Import My Favourite Assets")]
+    public static void ImportMyFavouriteAssets()
+    {
+        Assets.ImportAsset("DOTween HOTween v2.unitypackage", "Demigiant/Editor ExtensionsAnimation");
+    }
+
     private static class Folders
     {
         public static void CreateDefault(string root, params string[] folders)
@@ -26,6 +32,14 @@ public static class Setup
                     CreateDirectory(path);
                 }
             }
+        }
+    }
+    
+    private static class Assets
+    {
+        public static void ImportAsset(string asset, string subfolder, string folder = "C:/Users/Pranta/AppData/Roaming/Unity/Asset Store-5.x")
+        {
+            ImportPackage(Combine(folder, subfolder, asset), false);
         }
     }
 }
