@@ -43,9 +43,9 @@ namespace Utilities
         public abstract void Tick(float deltaTime);
     }
 
-    public class CooldownTimer : Timer
+    public class CountdownTimer : Timer
     {
-        public CooldownTimer(float value): base(value){}
+        public CountdownTimer(float value): base(value){}
 
         public override void Tick(float deltaTime)
         {

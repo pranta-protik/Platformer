@@ -17,6 +17,13 @@ public static class Setup
     public static void ImportMyFavouriteAssets()
     {
         Assets.ImportAsset("DOTween HOTween v2.unitypackage", "Demigiant/Editor ExtensionsAnimation");
+        Assets.ImportAsset("Cartoon FX Remaster Free.unitypackage", "Jean Moreno/Particle Systems");
+        Assets.ImportAsset("FREE Casual Game SFX Pack.unitypackage", "Dustyroom/AudioSound FX");
+        Assets.ImportAsset("Joystick Pack.unitypackage", "Fenerax Studios/ScriptingInput - Output");
+        Assets.ImportAsset("Folder In Hierarchy.unitypackage", "The AAA/Editor ExtensionsUtilities");
+        Assets.ImportAsset("Free Stylized Skybox.unitypackage", "Yuki2022/Textures MaterialsSkies");
+        Assets.ImportAsset("Jammo Character Mix and Jam.unitypackage", "Mix and Jam/3D ModelsCharacters");
+        Assets.ImportAsset("POLYGON Prototype - Low Poly 3D Art by Synty.unitypackage", "Synty Studios/3D ModelsPropsExterior");
     }
 
     private static class Folders

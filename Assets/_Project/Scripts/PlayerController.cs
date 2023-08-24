@@ -34,8 +34,8 @@ namespace Platformer
         private float _jumpVelocity;
         private Vector3 _movement;
         private List<Timer> _timers;
-        private CooldownTimer _jumpTimer;
-        private CooldownTimer _jumpCooldownTimer;
+        private CountdownTimer _jumpTimer;
+        private CountdownTimer _jumpCooldownTimer;
 
         private static readonly int Speed = Animator.StringToHash("Speed");
 
@@ -53,8 +53,8 @@ namespace Platformer
             _rigidbody.freezeRotation = true;
             
             // Setup timers
-            _jumpTimer = new CooldownTimer(_jumpDuration);
-            _jumpCooldownTimer = new CooldownTimer(_jumpCooldown);
+            _jumpTimer = new CountdownTimer(_jumpDuration);
+            _jumpCooldownTimer = new CountdownTimer(_jumpCooldown);
             _timers = new List<Timer>(2) { _jumpTimer, _jumpCooldownTimer };
 
             _jumpTimer.OnTimerStop += () => _jumpCooldownTimer.Start();
