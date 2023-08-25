@@ -7,7 +7,7 @@ namespace Platformer
     {
         private StateNode _current;
         private Dictionary<Type, StateNode> _nodes = new();
-        protected HashSet<ITransition> _anyTransitions = new();
+        private HashSet<ITransition> _anyTransitions = new();
 
         public void Update()
         {
