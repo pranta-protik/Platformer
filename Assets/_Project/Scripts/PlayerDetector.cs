@@ -12,6 +12,7 @@ namespace Platformer
         [SerializeField] private float _attackRange = 2f; // Distance from enemy to player to attack
 
         public Transform Player { get; private set; }
+        public Health PlayerHealth { get; private set; }
 
         private CountdownTimer _detectionTimer;
         private IDetectionStrategy _detectionStrategy;
@@ -19,6 +20,7 @@ namespace Platformer
         private void Awake()
         {
             Player = GameObject.FindGameObjectWithTag("Player").transform;
+            PlayerHealth = Player.GetComponent<Health>();
         }
 
         private void Start()

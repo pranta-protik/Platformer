@@ -15,7 +15,7 @@ namespace Platformer
         [SerializeField, Anywhere] private CinemachineFreeLook _freeLookVCam;
         [SerializeField, Anywhere] private InputReader _input;
 
-        [Header("Movement Settings")] 
+        [Header("Movement Settings")]
         [SerializeField] private float _moveSpeed = 6f;
         [SerializeField] private float _rotationSpeed = 500f;
         [SerializeField] private float _smoothTime = 0.2f;
@@ -27,24 +27,30 @@ namespace Platformer
         // [SerializeField] private float _jumpMaxHeight = 2f;
         [SerializeField] private float _gravityMultiplier = 3f;
 
-        [Header("Dash Settings")] 
+        [Header("Dash Settings")]
         [SerializeField] private float _dashForce = 10f;
         [SerializeField] private float _dashDuration = 1f;
         [SerializeField] private float _dashCooldown = 2f;
+
+        [Header("Attack Settings")]
+        [SerializeField] private float _attackCooldown = 0.5f;
+        [SerializeField] private float _attackDistance = 1f;
+        [SerializeField] private int _attackDamage = 10;
 
         private Transform _mainCam;
         private float _currentSpeed;
         private float _velocity;
         private float _jumpVelocity;
         private float _dashVelocity = 1f;
-        
+
         private Vector3 _movement;
-        
+
         private List<Timer> _timers;
         private CountdownTimer _jumpTimer;
         private CountdownTimer _jumpCooldownTimer;
         private CountdownTimer _dashTimer;
         private CountdownTimer _dashCooldownTimer;
+        private CountdownTimer _attackTimer;
 
         private StateMachine _stateMachine;
 
@@ -57,13 +63,47 @@ namespace Platformer
             _mainCam = Camera.main.transform;
             _freeLookVCam.Follow = transform;
             _freeLookVCam.LookAt = transform;
-            
+
             // Invoke event when observed transform is teleported, adjusting freeLookVCam's position accordingly
             _freeLookVCam.OnTargetObjectWarped(transform, transform.position - _freeLookVCam.transform.position - Vector3.forward);
 
             _rigidbody.freezeRotation = true;
-            
-            // Setup timers
+
+            SetupTimers();
+            SetupStateMachine();
+        }
+
+        private void SetupStateMachine()
+        {
+            _stateMachine = new StateMachine();
+
+            // Declare states
+            var locomotionState = new LocomotionState(this, _animator);
+            var jumpState = new JumpState(this, _animator);
+            var dashState = new DashState(this, _animator);
+            var attackState = new AttackState(this, _animator);
+
+            // Declare transitions
+            At(locomotionState, jumpState, new FuncPredicate(() => _jumpTimer.IsRunning));
+            At(locomotionState, dashState, new FuncPredicate(() => _dashTimer.IsRunning));
+            At(locomotionState, attackState, new FuncPredicate(() => _attackTimer.IsRunning));
+            // At(attackState, locomotionState, new FuncPredicate(() => !_attackTimer.IsRunning));
+            Any(locomotionState, new FuncPredicate(ReturnToLocomotionState));
+
+            // Set initial state
+            _stateMachine.SetState(locomotionState);
+        }
+
+        private bool ReturnToLocomotionState()
+        {
+            return _groundChecker.IsGrounded
+            && !_attackTimer.IsRunning
+            && !_jumpTimer.IsRunning
+            && !_dashTimer.IsRunning;
+        }
+
+        private void SetupTimers()
+        {
             _jumpTimer = new CountdownTimer(_jumpDuration);
             _jumpCooldownTimer = new CountdownTimer(_jumpCooldown);
             _jumpTimer.OnTimerStart += () => _jumpVelocity = _jumpForce;
@@ -77,29 +117,15 @@ namespace Platformer
                 _dashVelocity = 1f;
                 _dashCooldownTimer.Start();
             };
-            
-            _timers = new List<Timer>(4) { _jumpTimer, _jumpCooldownTimer, _dashTimer, _dashCooldownTimer};
-            
-            // State Machine
-            _stateMachine = new StateMachine();
-            
-            // Declare states
-            var locomotionState = new LocomotionState(this, _animator);
-            var jumpState = new JumpState(this, _animator);
-            var dashState = new DashState(this, _animator);
-            
-            // Declare transitions
-            At(locomotionState, jumpState, new FuncPredicate(() => _jumpTimer.IsRunning));
-            At(locomotionState, dashState, new FuncPredicate(() => _dashTimer.IsRunning));
-            Any(locomotionState, new FuncPredicate(() => _groundChecker.IsGrounded && !_jumpTimer.IsRunning && !_dashTimer.IsRunning));
-            
-            // Set initial state
-            _stateMachine.SetState(locomotionState);
+
+            _attackTimer = new CountdownTimer(_attackCooldown);
+
+            _timers = new List<Timer>(5) { _jumpTimer, _jumpCooldownTimer, _dashTimer, _dashCooldownTimer, _attackTimer };
         }
 
         private void At(IState from, IState to, IPredicate condition) => _stateMachine.AddTransition(from, to, condition);
         private void Any(IState to, IPredicate condition) => _stateMachine.AddAnyTransition(to, condition);
-        
+
 
         private void Start() => _input.EnablePlayerActions();
 
@@ -107,12 +133,37 @@ namespace Platformer
         {
             _input.Jump += OnJump;
             _input.Dash += OnDash;
+            _input.Attack += OnAttack;
         }
 
         private void OnDisable()
         {
             _input.Jump -= OnJump;
             _input.Dash -= OnDash;
+            _input.Attack -= OnAttack;
+        }
+
+        private void OnAttack()
+        {
+            if (!_attackTimer.IsRunning)
+            {
+                _attackTimer.Start();
+            }
+        }
+
+        public void Attack()
+        {
+            var attackPos = transform.position + transform.forward;
+            var hitEnemies = Physics.OverlapSphere(attackPos, _attackDistance);
+
+            foreach (var enemy in hitEnemies)
+            {
+                Debug.Log(enemy.name);
+                if (enemy.CompareTag("Enemy"))
+                {
+                    enemy.GetComponent<Health>().TakeDamage(_attackDamage);
+                }
+            }
         }
 
         private void OnJump(bool performed)
@@ -206,11 +257,11 @@ namespace Platformer
             // }
 
             #endregion
-            
+
             // Apply velocity
             _rigidbody.velocity = new Vector3(_rigidbody.velocity.x, _jumpVelocity, _rigidbody.velocity.z);
         }
-        
+
         public void HandleMovement()
         {
             // Rotate movement direction to match camera rotation
@@ -225,7 +276,7 @@ namespace Platformer
             else
             {
                 SmoothSpeed(ZeroF);
-                
+
                 // Reset horizontal velocity for a snappy stop
                 _rigidbody.velocity = new Vector3(ZeroF, _rigidbody.velocity.y, ZeroF);
             }

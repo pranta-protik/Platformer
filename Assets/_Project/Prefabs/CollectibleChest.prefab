@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 6957758868104307185}
   - component: {fileID: 2031219333309045339}
   - component: {fileID: 3752797028173843969}
+  - component: {fileID: 6865502614911571761}
   m_Layer: 0
   m_Name: CollectibleChest
   m_TagString: Untagged
@@ -47,6 +48,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c4cd76c300674aa1a51476d1fb6cb4c2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _score: 10
+  _scoreChannel: {fileID: 11400000, guid: cdd02011c9f16594ba0967309cd60922, type: 2}
 --- !u!114 &2031219333309045339
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -158,6 +161,27 @@ AudioSource:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
+--- !u!135 &6865502614911571761
+SphereCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6772354452188006767}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Radius: 1
+  m_Center: {x: 0, y: 0.5, z: 0}
 --- !u!1001 &548632715079543832
 PrefabInstance:
   m_ObjectHideFlags: 0

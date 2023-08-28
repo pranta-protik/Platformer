@@ -1,3 +1,4 @@
+using Newtonsoft.Json;
 using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
@@ -16,7 +17,7 @@ namespace MyTools
             Folders.CreateDefault("_Project", "Animation", "Art", "Materials", "Prefabs", "ScriptableObjects", "Scripts/UI", "Settings");
             AssetDatabase.Refresh();
         }
-        
+
         [MenuItem("Tools/Setup/Install Required Packages")]
         public static void InstallRequiredPackages()
         {
@@ -25,13 +26,14 @@ namespace MyTools
                 "com.unity.ai.navigation"
             });
         }
-        
+
         [MenuItem("Tools/Setup/Install My Favourite Open Source")]
         public static void InstallOpenSource()
         {
             Packages.InstallPackages(new[]
             {
-                "git+https://github.com/KyleBanks/scene-ref-attribute"
+                "git+https://github.com/KyleBanks/scene-ref-attribute",
+                "git+com.unity.nuget.newtonsoft-json"
             });
         }
 
@@ -48,7 +50,7 @@ namespace MyTools
             Assets.ImportAsset("Jammo Character Mix and Jam.unitypackage", "Mix and Jam/3D ModelsCharacters");
             Assets.ImportAsset("POLYGON Prototype - Low Poly 3D Art by Synty.unitypackage", "Synty Studios/3D ModelsPropsExterior");
         }
-        
+
         private static class Folders
         {
             public static void CreateDefault(string root, params string[] folders)
@@ -59,7 +61,7 @@ namespace MyTools
                 {
                     Directory.CreateDirectory(fullPath);
                 }
-                
+
                 foreach (var folder in folders)
                 {
                     CreateSubFolders(fullPath, folder);
@@ -80,7 +82,7 @@ namespace MyTools
                 }
             }
         }
-        
+
         private static class Packages
         {
             private static AddRequest Request;
@@ -92,7 +94,7 @@ namespace MyTools
                 {
                     PackagesToInstall.Enqueue(package);
                 }
-                
+
                 // Start the installation of the first package
                 if (PackagesToInstall.Count > 0)
                 {
@@ -115,9 +117,9 @@ namespace MyTools
                     }
 
                     EditorApplication.update -= Progress;
-                    
+
                     // If there are more packages to install, start the next one
-                    if (PackagesToInstall.Count >0)
+                    if (PackagesToInstall.Count > 0)
                     {
                         // Add delay before next package install
                         await Task.Delay(1000);
